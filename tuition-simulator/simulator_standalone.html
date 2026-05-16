@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유학생 선발 및 등록금 시뮬레이터</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --secondary: #0ea5e9;
+    --bg-color: #0f172a;
+    --panel-bg: #1e293b;
+    --card-bg: #334155;
+    --text-main: #f8fafc;
+    --text-muted: #cbd5e1;
+    --accent-a: #ec4899;
+    --accent-b: #10b981;
+    --error: #ef4444;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.8s ease;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--secondary), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+}
+
+.panel {
+    background: var(--panel-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--card-bg);
+    padding-bottom: 0.5rem;
+}
+
+.input-group {
+    margin-bottom: 1.2rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid transparent;
+    color: var(--text-main);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.card-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.card {
+    background: rgba(51, 65, 85, 0.5);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid var(--accent-a);
+}
+
+.card:nth-child(2) {
+    border-left-color: var(--accent-b);
+}
+
+.card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}
+
+.result-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.error-message {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--error);
+    color: var(--error);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.result-cards {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.result-card {
+    flex: 1;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+}
+
+.result-card:first-child::before {
+    background: var(--accent-a);
+}
+
+.result-card:last-child::before {
+    background: var(--accent-b);
+}
+
+.result-card .label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-card .value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.result-card .sub-value {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.result-chart {
+    margin-bottom: 2rem;
+}
+
+.bar-container {
+    height: 30px;
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+}
+
+.a-bar {
+    background: linear-gradient(90deg, #be185d, var(--accent-a));
+}
+
+.b-bar {
+    background: linear-gradient(90deg, var(--accent-b), #047857);
+}
+
+.revenue-section {
+    background: rgba(15, 23, 42, 0.5);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-top: auto;
+}
+
+.revenue-section h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+}
+
+.revenue-total {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #f59e0b;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.revenue-details {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--card-bg);
+    padding-top: 1rem;
+}
+
+.revenue-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.revenue-item span:first-child {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.revenue-item span:last-child {
+    font-weight: 600;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>유학생 선발 시뮬레이터</h1>
+            <p>한국어 성적 목표 비율을 위한 국가별 선발 최적화</p>
+        </header>
+
+        <main>
+            <div class="panel input-panel">
+                <h2>조건 입력</h2>
+                
+                <div class="input-group">
+                    <label>목표 한국어 성적 보유 비율 (%)</label>
+                    <input type="number" id="target-rate" value="50" min="0" max="100">
+                </div>
+                
+                <div class="input-group">
+                    <label>총 선발 인원 (명)</label>
+                    <input type="number" id="total-students" value="100" min="1">
+                </div>
+
+                <div class="card-group">
+                    <div class="card">
+                        <h3>A국가 설정</h3>
+                        <div class="input-group">
+                            <label>한국어 성적 보유자 비율 (%)</label>
+                            <input type="number" id="a-rate" value="20" min="0" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label>등록금 (한국어 O) - 만원</label>
+                            <input type="number" id="a-fee-with" value="400" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label>등록금 (한국어 X) - 만원</label>
+                            <input type="number" id="a-fee-without" value="500" min="0">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>B국가 설정</h3>
+                        <div class="input-group">
+                            <label>한국어 성적 보유자 비율 (%)</label>
+                            <input type="number" id="b-rate" value="80" min="0" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label>등록금 (한국어 O) - 만원</label>
+                            <input type="number" id="b-fee-with" value="400" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label>등록금 (한국어 X) - 만원</label>
+                            <input type="number" id="b-fee-without" value="500" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel result-panel">
+                <h2>시뮬레이션 결과</h2>
+                
+                <div id="error-message" class="error-message hidden">
+                    현재 설정된 각 국가의 한국어 보유 비율로는 목표 비율을 달성할 수 없습니다.
+                </div>
+
+                <div id="results-content">
+                    <div class="result-cards">
+                        <div class="result-card primary">
+                            <span class="label">필요 A국가 학생 수</span>
+                            <span class="value" id="res-a-count">0</span>
+                            <span class="sub-value" id="res-a-ratio">(0%)</span>
+                        </div>
+                        <div class="result-card primary">
+                            <span class="label">필요 B국가 학생 수</span>
+                            <span class="value" id="res-b-count">0</span>
+                            <span class="sub-value" id="res-b-ratio">(0%)</span>
+                        </div>
+                    </div>
+
+                    <div class="result-chart">
+                        <div class="bar-container">
+                            <div class="bar a-bar" id="bar-a" style="width: 50%;">A국가</div>
+                            <div class="bar b-bar" id="bar-b" style="width: 50%;">B국가</div>
+                        </div>
+                    </div>
+
+                    <div class="revenue-section">
+                        <h3>예상 등록금 수입</h3>
+                        <div class="revenue-total" id="res-revenue">0 만원</div>
+                        
+                        <div class="revenue-details">
+                            <div class="revenue-item">
+                                <span>A국가 수입:</span>
+                                <span id="res-rev-a">0 만원</span>
+                            </div>
+                            <div class="revenue-item">
+                                <span>B국가 수입:</span>
+                                <span id="res-rev-b">0 만원</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Input elements
+    const inputs = {
+        targetRate: document.getElementById('target-rate'),
+        totalStudents: document.getElementById('total-students'),
+        aRate: document.getElementById('a-rate'),
+        aFeeWith: document.getElementById('a-fee-with'),
+        aFeeWithout: document.getElementById('a-fee-without'),
+        bRate: document.getElementById('b-rate'),
+        bFeeWith: document.getElementById('b-fee-with'),
+        bFeeWithout: document.getElementById('b-fee-without')
+    };
+
+    // Output elements
+    const elements = {
+        errorMessage: document.getElementById('error-message'),
+        resultsContent: document.getElementById('results-content'),
+        resACount: document.getElementById('res-a-count'),
+        resARatio: document.getElementById('res-a-ratio'),
+        resBCount: document.getElementById('res-b-count'),
+        resBRatio: document.getElementById('res-b-ratio'),
+        barA: document.getElementById('bar-a'),
+        barB: document.getElementById('bar-b'),
+        resRevenue: document.getElementById('res-revenue'),
+        resRevA: document.getElementById('res-rev-a'),
+        resRevB: document.getElementById('res-rev-b')
+    };
+
+    // Number formatter
+    const formatCurrency = (num) => {
+        return new Intl.NumberFormat('ko-KR').format(Math.round(num)) + ' 만원';
+    };
+
+    const formatNumber = (num) => {
+        return new Intl.NumberFormat('ko-KR').format(Math.round(num));
+    };
+
+    // Main calculation logic
+    const calculate = () => {
+        // Get values
+        const targetRate = parseFloat(inputs.targetRate.value) / 100;
+        const totalStudents = parseInt(inputs.totalStudents.value);
+        const aRate = parseFloat(inputs.aRate.value) / 100;
+        const bRate = parseFloat(inputs.bRate.value) / 100;
+        
+        const aFeeWith = parseFloat(inputs.aFeeWith.value);
+        const aFeeWithout = parseFloat(inputs.aFeeWithout.value);
+        const bFeeWith = parseFloat(inputs.bFeeWith.value);
+        const bFeeWithout = parseFloat(inputs.bFeeWithout.value);
+
+        let aRatio = 0;
+
+        if (aRate === bRate) {
+            if (targetRate === aRate) {
+                aRatio = 0.5; // Any ratio works, default to 50/50
+            } else {
+                showError();
+                return;
+            }
+        } else {
+            aRatio = (targetRate - bRate) / (aRate - bRate);
+        }
+
+        // Validate possible ratios
+        if (aRatio < 0 || aRatio > 1) {
+            showError();
+            return;
+        }
+
+        const bRatio = 1 - aRatio;
+
+        // Calculate student counts
+        const aCount = Math.round(totalStudents * aRatio);
+        const bCount = totalStudents - aCount; // Ensure total is exactly totalStudents
+        
+        // Recalculate actual ratio due to rounding
+        const actualARatio = totalStudents > 0 ? aCount / totalStudents : 0;
+        const actualBRatio = totalStudents > 0 ? bCount / totalStudents : 0;
+
+        // Calculate revenues
+        const aCountWith = aCount * aRate;
+        const aCountWithout = aCount * (1 - aRate);
+        const aRevenue = (aCountWith * aFeeWith) + (aCountWithout * aFeeWithout);
+
+        const bCountWith = bCount * bRate;
+        const bCountWithout = bCount * (1 - bRate);
+        const bRevenue = (bCountWith * bFeeWith) + (bCountWithout * bFeeWithout);
+
+        const totalRevenue = aRevenue + bRevenue;
+
+        // Update UI
+        updateUI(aCount, bCount, actualARatio, actualBRatio, aRevenue, bRevenue, totalRevenue);
+    };
+
+    const showError = () => {
+        elements.errorMessage.classList.remove('hidden');
+        elements.resultsContent.classList.add('hidden');
+    };
+
+    const updateUI = (aCount, bCount, aRatio, bRatio, aRev, bRev, totalRev) => {
+        elements.errorMessage.classList.add('hidden');
+        elements.resultsContent.classList.remove('hidden');
+
+        // Update counts and ratios
+        elements.resACount.textContent = formatNumber(aCount) + '명';
+        elements.resARatio.textContent = `(${(aRatio * 100).toFixed(1)}%)`;
+        
+        elements.resBCount.textContent = formatNumber(bCount) + '명';
+        elements.resBRatio.textContent = `(${(bRatio * 100).toFixed(1)}%)`;
+
+        // Update chart
+        elements.barA.style.width = `${aRatio * 100}%`;
+        elements.barB.style.width = `${bRatio * 100}%`;
+
+        // Update revenue
+        elements.resRevenue.textContent = formatCurrency(totalRev);
+        elements.resRevA.textContent = formatCurrency(aRev);
+        elements.resRevB.textContent = formatCurrency(bRev);
+    };
+
+    // Add event listeners to all inputs
+    Object.values(inputs).forEach(input => {
+        input.addEventListener('input', calculate);
+    });
+
+    // Initial calculation
+    calculate();
+});
+    </script>
+</body>
+</html>

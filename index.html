@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유학생 선발 및 등록금 시뮬레이터</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>유학생 선발 시뮬레이터</h1>
+            <p>한국어 성적 목표 비율을 위한 국가별 선발 최적화</p>
+        </header>
+
+        <main>
+            <div class="panel input-panel">
+                <h2>조건 입력</h2>
+                
+                <div class="input-group">
+                    <label>목표 한국어 성적 보유 비율 (%)</label>
+                    <input type="number" id="target-rate" value="50" min="0" max="100">
+                </div>
+                
+                <div class="input-group">
+                    <label>총 선발 인원 (명)</label>
+                    <input type="number" id="total-students" value="100" min="1">
+                </div>
+
+                <div class="card-group">
+                    <div class="card">
+                        <h3>A국가 설정</h3>
+                        <div class="input-group">
+                            <label>한국어 성적 보유자 비율 (%)</label>
+                            <input type="number" id="a-rate" value="20" min="0" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label>등록금 (한국어 O) - 만원</label>
+                            <input type="number" id="a-fee-with" value="400" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label>등록금 (한국어 X) - 만원</label>
+                            <input type="number" id="a-fee-without" value="500" min="0">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>B국가 설정</h3>
+                        <div class="input-group">
+                            <label>한국어 성적 보유자 비율 (%)</label>
+                            <input type="number" id="b-rate" value="80" min="0" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label>등록금 (한국어 O) - 만원</label>
+                            <input type="number" id="b-fee-with" value="400" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label>등록금 (한국어 X) - 만원</label>
+                            <input type="number" id="b-fee-without" value="500" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel result-panel">
+                <h2>시뮬레이션 결과</h2>
+                
+                <div id="error-message" class="error-message hidden">
+                    현재 설정된 각 국가의 한국어 보유 비율로는 목표 비율을 달성할 수 없습니다.
+                </div>
+
+                <div id="results-content">
+                    <div class="result-cards">
+                        <div class="result-card primary">
+                            <span class="label">필요 A국가 학생 수</span>
+                            <span class="value" id="res-a-count">0</span>
+                            <span class="sub-value" id="res-a-ratio">(0%)</span>
+                        </div>
+                        <div class="result-card primary">
+                            <span class="label">필요 B국가 학생 수</span>
+                            <span class="value" id="res-b-count">0</span>
+                            <span class="sub-value" id="res-b-ratio">(0%)</span>
+                        </div>
+                    </div>
+
+                    <div class="result-chart">
+                        <div class="bar-container">
+                            <div class="bar a-bar" id="bar-a" style="width: 50%;">A국가</div>
+                            <div class="bar b-bar" id="bar-b" style="width: 50%;">B국가</div>
+                        </div>
+                    </div>
+
+                    <div class="revenue-section">
+                        <h3>예상 등록금 수입</h3>
+                        <div class="revenue-total" id="res-revenue">0 만원</div>
+                        
+                        <div class="revenue-details">
+                            <div class="revenue-item">
+                                <span>A국가 수입:</span>
+                                <span id="res-rev-a">0 만원</span>
+                            </div>
+                            <div class="revenue-item">
+                                <span>B국가 수입:</span>
+                                <span id="res-rev-b">0 만원</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
